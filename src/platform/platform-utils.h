@@ -15,6 +15,7 @@ namespace platform {
 struct uvc_device_info;
 struct hid_device_info;
 struct usb_device_info;
+struct mipi_device_info;
 
 
 // Helper functions for device list manipulation:

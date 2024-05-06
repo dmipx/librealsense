@@ -39,6 +39,8 @@ public:
             return _group.uvc_devices.front().device_path;
         if( ! _group.usb_devices.empty() )
             return _group.usb_devices.front().id;
+        if( ! _group.mipi_devices.empty() )
+            return _group.mipi_devices.front().id;
         throw std::runtime_error( "non-standard platform-device-info" );
     }
 
