@@ -19,7 +19,13 @@ namespace librealsense
         static std::vector< std::shared_ptr< fw_update_info > > pick_recovery_devices(
             std::shared_ptr< context > ctx, const std::vector< platform::usb_device_info > & usb_devices, int mask );
 
+        static std::vector< std::shared_ptr< fw_update_info > > pick_recovery_devices(
+            std::shared_ptr< context > ctx, const std::vector< platform::mipi_device_info > & mipi_devices, int mask );
+
         explicit fw_update_info(std::shared_ptr<context> ctx, platform::usb_device_info const & dfu)
+            : platform_device_info( ctx, { { dfu } } ) {}
+
+        explicit fw_update_info(std::shared_ptr<context> ctx, platform::mipi_device_info const & dfu)
             : platform_device_info( ctx, { { dfu } } ) {}
 
         std::string get_address() const override { return "recovery:" + super::get_address(); }

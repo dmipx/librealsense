@@ -42,11 +42,26 @@ namespace librealsense
         return list;
     }
 
+    std::vector< std::shared_ptr< fw_update_info > > fw_update_info::pick_recovery_devices(
+        std::shared_ptr< context > ctx, const std::vector< platform::mipi_device_info > & mipi_devices, int mask )
+    {
+        std::vector< std::shared_ptr< fw_update_info > > list;
+        for (auto&& mipi : mipi_devices)
+        {
+            list.push_back(std::make_shared<fw_update_info>(ctx, mipi));
+        }
+        return list;
+    }
+
 
     std::shared_ptr<device_interface> fw_update_info::create_device()
     {
         auto devices = platform::usb_enumerator::query_devices_info();
         auto const & dfu_id = get_group().usb_devices.front().id;
+
+        auto const & mipi_id = get_group().mipi_devices.front().id;
+
+    if (&dfu_id != nullptr) { //TODO:
         for (auto&& info : devices)
         {
             if( info.id == dfu_id )
@@ -69,5 +84,24 @@ namespace librealsense
         }
         throw std::runtime_error( rsutils::string::from()
                                   << "Failed to create FW update device, device id: " << dfu_id );
+    }
+    else {
+        for (auto&& info: get_group().mipi_devices)
+        {
+/*            auto mipi = platform::mipi_enumerator::create_mipi_device(info);
+            if (!mipi)
+                continue;*/
+            switch( info.pid )
+            {
+            case 0xbbcd:
+/*                return std::make_shared< ds_d400_update_device >( shared_from_this(), info );*/
+            default:
+                // Do nothing
+                break;
+            }
+        }
+        throw std::runtime_error( rsutils::string::from()
+                                  << "Failed to create FW update device, device id: " << mipi_id );
+    }
     }
 }
